@@ -7,14 +7,22 @@ const getSourceAst = (sourceFilesPath) => {
         allowJs: true,
     });
 
+    const isFunctionOrAnyType = (type) => {
+        const symbolEscapedName = type?.getSymbol()?.getEscapedName();
+        if(symbolEscapedName === '__function' || !symbolEscapedName){
+            return true;
+        }
+
+        return false;
+    }
+
+    
+
+
     const extractNamedExports = (statement) => {
-        
-        
         const declaration = statement?.declarationList?.declarations[0];
         if(declaration){
-            const type= typeChecker.getTypeAtLocation(declaration);
-            const variableType = typeChecker.typeToString(type);
-            return variableType;
+            return typeChecker.getTypeAtLocation(declaration);
         }
     }
     
@@ -36,13 +44,14 @@ const getSourceAst = (sourceFilesPath) => {
         if(ts.isExportDeclaration(statement)){
             statement.exportClause.elements.forEach((element)=>{
                 const type = typeChecker.getTypeAtLocation(element);
-                const variableType = typeChecker.typeToString(type);
-                exportedFunctions.push(variableType);
+                exportedFunctions.push(type);
             })
         };
     });
 
-    console.log(exportedFunctions);
+    console.log(exportedFunctions.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type)));
   };
 
+  console.time('getSourceAst');
   getSourceAst(['./file.js'])
+  console.timeEnd('getSourceAst');
