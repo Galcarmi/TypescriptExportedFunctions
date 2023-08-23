@@ -9,10 +9,7 @@ const getSourceAst = (sourceFilesPath) => {
 
     const extractNamedExports = (statement) => {
         
-        const modifier = statement?.modifiers?.[0];
-        if(!modifier || !ts.isExportOrDefaultModifier(modifier)){
-            return;
-        }
+        
         const declaration = statement?.declarationList?.declarations[0];
         if(declaration){
             const type= typeChecker.getTypeAtLocation(declaration);
@@ -27,12 +24,22 @@ const getSourceAst = (sourceFilesPath) => {
     const exportedFunctions = [];
     ast.statements.forEach((statement) => {
         debugger;
-        const extractedNamedExports = extractNamedExports(statement);
-
-        if(extractedNamedExports)
-        {
-            exportedFunctions.push(extractedNamedExports);
+        const modifier = statement?.modifiers?.[0];
+        if(modifier && ts.isExportOrDefaultModifier(modifier)){
+            const extractedNamedExports = extractNamedExports(statement);
+            if(extractedNamedExports)
+            {
+                exportedFunctions.push(extractedNamedExports);
+            }
         }
+        
+        if(ts.isExportDeclaration(statement)){
+            statement.exportClause.elements.forEach((element)=>{
+                const type = typeChecker.getTypeAtLocation(element);
+                const variableType = typeChecker.typeToString(type);
+                exportedFunctions.push(variableType);
+            })
+        };
     });
 
     console.log(exportedFunctions);
