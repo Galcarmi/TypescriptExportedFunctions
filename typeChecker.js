@@ -53,7 +53,6 @@ const getExportedFunctions = (sourceFilesPath) => {
             );
         }else if(ts.isExportDeclaration(statement)){
             statement.exportClause.elements.forEach((element)=>{
-                debugger
                 exportedElements.push(
                     {
                         name: element.name.escapedText,
