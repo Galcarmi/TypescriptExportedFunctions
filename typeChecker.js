@@ -34,7 +34,7 @@ const getExportedFunctions = (sourceFilesPath) => {
 
     const ast = tsProgram.getSourceFile(sourceFilesPath[0]);
     const typeChecker = tsProgram.getTypeChecker();
-    const exportedElementsTypes = [];
+    const exportedElements = [];
 
     for(let i=0; i<ast.statements.length; i++){
         const statement = ast.statements[i];
@@ -45,19 +45,31 @@ const getExportedFunctions = (sourceFilesPath) => {
                 continue;
             }
 
-            exportedElementsTypes.push(
-                typeChecker.getTypeAtLocation(declaration)
+            exportedElements.push(
+                {
+                    type: typeChecker.getTypeAtLocation(declaration),
+                    name: declaration.name.escapedText
+                }
             );
         }else if(ts.isExportDeclaration(statement)){
             statement.exportClause.elements.forEach((element)=>{
-                exportedElementsTypes.push(
-                    typeChecker.getTypeAtLocation(element)
+                debugger
+                exportedElements.push(
+                    {
+                        name: element.name.escapedText,
+                        type: typeChecker.getTypeAtLocation(element),
+                    }
                 );
             })
         };
     };
 
-    return exportedElementsTypes.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
+    return exportedElements
+            .filter(({type})=>isFunctionOrAnyType(type))
+            .map(({type, name})=>({
+                name,
+                type: typeChecker.typeToString(type),
+            }))
   };
 
 console.time('preWarmTypescriptCompiler');
