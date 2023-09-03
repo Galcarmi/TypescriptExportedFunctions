@@ -1,6 +1,21 @@
 const ts = require("typescript");
 
-const getSourceAst = (sourceFilesPath) => {
+const preWarmTypescriptCompiler = () => {
+    const tsPrograms = ts.createProgram(['./emptyFile.js'], {
+        skipLibCheck: true,
+        allowJs: true,
+        noEmit: true,
+        noEmitOnError: true,
+        noStrictGenericChecks: true,
+        skipDefaultLibCheck: true,
+        declaration: false,
+        declarationMap: false,
+        noUnusedLocals: false,
+        noUnusedParameters: false,
+    });
+}
+
+const getExportedFunctions = (sourceFilesPath) => {
     debugger
     console.time('initializeTsProgram');
     const tsProgram = ts.createProgram(sourceFilesPath, {
@@ -60,7 +75,11 @@ const getSourceAst = (sourceFilesPath) => {
     return exportedFunctions.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
   };
 
-console.time('getSourceAst');
-console.log('functions', getSourceAst(['./file.js']))
-console.timeEnd('getSourceAst');
+console.time('preWarmTypescriptCompiler');
+preWarmTypescriptCompiler();
+console.timeEnd('preWarmTypescriptCompiler');
+
+console.time('getExportedFunctions');
+console.log('functions', getExportedFunctions(['./file.js']))
+console.timeEnd('getExportedFunctions');
 console.log("Memory Usage:", process.memoryUsage());

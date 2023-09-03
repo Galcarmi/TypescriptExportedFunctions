@@ -2,7 +2,6 @@ require("lodash")
 const {externalFunc} = require('./file2.js')
 const {foo} = require('./file3.js')
 const largeFile = require('./file-for-site.js')
-const largeFile = require('./file-for-site2.js')
 
 export const a =func;
 export const b =lodash.func("hi");
