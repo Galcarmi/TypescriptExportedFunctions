@@ -1,7 +1,7 @@
 const ts = require("typescript");
 
 const preWarmTypescriptCompiler = () => {
-    const tsPrograms = ts.createProgram(['./emptyFile.js'], {
+    ts.createProgram(['./emptyFile.js'], {
         skipLibCheck: true,
         allowJs: true,
         noEmit: true,
