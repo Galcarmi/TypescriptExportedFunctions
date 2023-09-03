@@ -49,7 +49,6 @@ const getExportedFunctions = (sourceFilesPath) => {
         const statement = ast.statements[i];
         const modifier = statement?.modifiers?.[0];
         if(modifier && ts.isExportOrDefaultModifier(modifier)){
-            debugger;
             const declaration = statement?.declarationList?.declarations[0];
             if(!declaration){
                 continue;
@@ -58,9 +57,7 @@ const getExportedFunctions = (sourceFilesPath) => {
             exportedElementsTypes.push(
                 typeChecker.getTypeAtLocation(declaration)
             );
-        }
-        
-        if(ts.isExportDeclaration(statement)){
+        }else if(ts.isExportDeclaration(statement)){
             statement.exportClause.elements.forEach((element)=>{
                 exportedElementsTypes.push(
                     typeChecker.getTypeAtLocation(element)
