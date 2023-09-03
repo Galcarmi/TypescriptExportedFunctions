@@ -51,7 +51,7 @@ const getExportedFunctions = (sourceFilesPath) => {
     
     const ast = tsProgram.getSourceFile(sourceFilesPath[0]);
     const typeChecker = tsProgram.getTypeChecker();
-    const exportedFunctions = [];
+    const exportedElements = [];
     ast.statements.forEach((statement) => {
         debugger;
         const modifier = statement?.modifiers?.[0];
@@ -72,7 +72,7 @@ const getExportedFunctions = (sourceFilesPath) => {
         };
     });
 
-    return exportedFunctions.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
+    return exportedElements.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
   };
 
 console.time('preWarmTypescriptCompiler');
