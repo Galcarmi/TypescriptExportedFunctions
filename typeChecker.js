@@ -1,34 +1,25 @@
 const ts = require("typescript");
 
+const typescriptCompilerOptions = {
+    skipLibCheck: true,
+    allowJs: true,
+    noEmit: true,
+    noEmitOnError: true,
+    noStrictGenericChecks: true,
+    skipDefaultLibCheck: true,
+    declaration: false,
+    declarationMap: false,
+    noUnusedLocals: false,
+    noUnusedParameters: false,
+}
+
 const preWarmTypescriptCompiler = () => {
-    ts.createProgram(['./emptyFile.js'], {
-        skipLibCheck: true,
-        allowJs: true,
-        noEmit: true,
-        noEmitOnError: true,
-        noStrictGenericChecks: true,
-        skipDefaultLibCheck: true,
-        declaration: false,
-        declarationMap: false,
-        noUnusedLocals: false,
-        noUnusedParameters: false,
-    });
+    ts.createProgram(['./emptyFile.js'], typescriptCompilerOptions);
 }
 
 const getExportedFunctions = (sourceFilesPath) => {
     console.time('initializeTsProgram');
-    const tsProgram = ts.createProgram(sourceFilesPath, {
-        skipLibCheck: true,
-        allowJs: true,
-        noEmit: true,
-        noEmitOnError: true,
-        noStrictGenericChecks: true,
-        skipDefaultLibCheck: true,
-        declaration: false,
-        declarationMap: false,
-        noUnusedLocals: false,
-        noUnusedParameters: false,
-    });
+    const tsProgram = ts.createProgram(sourceFilesPath, typescriptCompilerOptions);
     console.timeEnd('initializeTsProgram');
 
     const isFunctionOrAnyType = (type) => {
