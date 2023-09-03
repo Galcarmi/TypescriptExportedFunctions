@@ -2,6 +2,7 @@ const ts = require("typescript");
 
 const getSourceAst = (sourceFilesPath) => {
     debugger
+    console.time('initializeTsProgram');
     const tsProgram = ts.createProgram(sourceFilesPath, {
         skipLibCheck: true,
         allowJs: true,
@@ -14,6 +15,7 @@ const getSourceAst = (sourceFilesPath) => {
         noUnusedLocals: false,
         noUnusedParameters: false,
     });
+    console.timeEnd('initializeTsProgram');
 
     const isFunctionOrAnyType = (type) => {
         const symbolEscapedName = type?.getSymbol()?.getEscapedName();
@@ -58,7 +60,7 @@ const getSourceAst = (sourceFilesPath) => {
     return exportedFunctions.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
   };
 
-  console.time('getSourceAst');
-  getSourceAst(['./large-file.js'])
-  console.timeEnd('getSourceAst');
+console.time('getSourceAst');
+console.log('functions', getSourceAst(['./file.js']))
+console.timeEnd('getSourceAst');
 console.log("Memory Usage:", process.memoryUsage());
