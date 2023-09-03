@@ -16,7 +16,6 @@ const preWarmTypescriptCompiler = () => {
 }
 
 const getExportedFunctions = (sourceFilesPath) => {
-    debugger
     console.time('initializeTsProgram');
     const tsProgram = ts.createProgram(sourceFilesPath, {
         skipLibCheck: true,
@@ -42,37 +41,35 @@ const getExportedFunctions = (sourceFilesPath) => {
         return false;
     }
 
-    const extractNamedExports = (statement) => {
-        const declaration = statement?.declarationList?.declarations[0];
-        if(declaration){
-            return typeChecker.getTypeAtLocation(declaration);
-        }
-    }
-    
     const ast = tsProgram.getSourceFile(sourceFilesPath[0]);
     const typeChecker = tsProgram.getTypeChecker();
-    const exportedElements = [];
-    ast.statements.forEach((statement) => {
-        debugger;
+    const exportedElementsTypes = [];
+
+    for(let i=0; i<ast.statements.length; i++){
+        const statement = ast.statements[i];
         const modifier = statement?.modifiers?.[0];
         if(modifier && ts.isExportOrDefaultModifier(modifier)){
-            const extractedNamedExports = extractNamedExports(statement);
-            if(extractedNamedExports)
-            {
-                exportedFunctions.push(extractedNamedExports);
+            debugger;
+            const declaration = statement?.declarationList?.declarations[0];
+            if(!declaration){
+                continue;
             }
+
+            exportedElementsTypes.push(
+                typeChecker.getTypeAtLocation(declaration)
+            );
         }
         
         if(ts.isExportDeclaration(statement)){
             statement.exportClause.elements.forEach((element)=>{
-                debugger
-                const type = typeChecker.getTypeAtLocation(element);
-                exportedFunctions.push(type);
+                exportedElementsTypes.push(
+                    typeChecker.getTypeAtLocation(element)
+                );
             })
         };
-    });
+    };
 
-    return exportedElements.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
+    return exportedElementsTypes.filter(isFunctionOrAnyType).map(type=>typeChecker.typeToString(type))
   };
 
 console.time('preWarmTypescriptCompiler');
